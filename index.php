@@ -7,20 +7,30 @@ function format_iit_time ($time){
 	return $time;
 }
 
+function get_calendar_data($url){
+  $jsonFile = file_get_contents($url);
+  // convert the string to a json object
+  $jsonObj = json_decode($jsonFile);
+  $items = $jsonObj->items;
+  return $items;
+}
+
 //echo getcwd() . "<br/>";
 $is24=false;
 date_default_timezone_set("America/Chicago");
-$dateFormat="Y-m-d";
+$dateFormat="l, F j";
 $timeFormat="g:ia";
 $debug=true;
-
+$hours24=86400;
 $two_days_ago = date("Y-m-d", time()-172800); 
 $yesterday=date("Y-m-d", time()-86400); 
 $today = date("l, F j");
 $APIformat="Y-m-d";
 
-$timeMin = date($APIformat) . 'T00:00:00.000Z';
-$timeMax = date($APIformat) . 'T23:59:00.000Z';
+
+$getDate=$hours24*3;
+$timeMin = date($APIformat,time()+$getDate) . 'T00:00:00.000Z';
+$timeMax = date($APIformat,time()+$getDate) . 'T23:59:00.000Z';
 
 
 $key = file_get_contents('GoogleAPIkey.txt'); 
@@ -35,34 +45,30 @@ $url='https://www.googleapis.com/calendar/v3/calendars/' . $calendar . '/events?
 
 //echo $url;
 
-    $json_file = file_get_contents($url);
-    // convert the string to a json object
-    $jsonObj = json_decode($json_file);
-    $items = $jsonObj->items;
+$items = get_calendar_data($url);
 
 foreach ($items as $item) {
+  $is24=false;
   $title = $item->summary;
   // Google Calendar API v3 uses dateTime field if event is less than 24 hours, or date field if it is
   if (isset($item->start->dateTime)){
-    $startTime = date('Hi',strtotime(substr($item->start->dateTime, 0, 19)));
-    if ( ($startTime == '0000') ||($startTime == '2400'))
-      $is24=true;
-    //$startTime = substr($item->start->dateTime, 0, 19)));
+    $startTime = format_iit_time(date($timeFormat,strtotime(substr($item->start->dateTime, 0,19))));
     $endTime = format_iit_time(date($timeFormat,strtotime(substr($item->end->dateTime, 0,19))));
     $eventDate = date($dateFormat,strtotime($item->start->dateTime));
   }
   else {
-    $startTime='0000';
-    $endTime = 2400;
+    $is24=true;
+    $startTime = 0;
+    $endTime = format_iit_time(date($timeFormat,strtotime(substr($item->end->date, 0,19))));
     $eventDate = date($dateFormat,strtotime($item->start->date));
   }
 
   $dow = date('l',strtotime($eventDate));
 
   if ($debug) {
-    echo "<p>Hours for $today</p> ";
+    echo "<p>Hours for $eventDate:</p> ";
     if ($is24)
-      echo "Galvin is open until $endTime";
+      echo "Galvin is open from $startTime until $endTime"; 
     else
       echo "Galvin is open from $startTime until $endTime";
   }
