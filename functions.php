@@ -59,8 +59,7 @@ function display_google_calendar_hours($calendar,$days){
 
     $items = get_calendar_data($url);
     if(($items== NULL)||($items=="")){
-      echo "error getting calendar data";
-      exit;      
+      echo "No data found for " . date($dateFormat,time()+$hours24) .'.<br/>';
     }
     
     //start with defaults to fail gracefully
