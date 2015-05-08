@@ -1,6 +1,7 @@
 <?php
 
 $debug=true;
+date_default_timezone_set('America/Chicago');
 
 //Communications & Marketing format for times
 function format_iit_time ($time){ 
