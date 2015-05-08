@@ -1,5 +1,7 @@
 <?php
 
+$debug=true;
+
 //Communications & Marketing format for times
 function format_iit_time ($time){ 
 	$time = str_replace(':00','',$time);
@@ -19,8 +21,14 @@ function get_calendar_data($url){
 
 //load developer key
 function get_googleAPI_key(){
-  //working dir in Drupal is /var/www/drupal/
-  $key = file_get_contents('sites/all/modules/custom/hours/GoogleAPIkey.txt'); 
+  global $debug;
+  $file='GoogleAPIkey.txt';
+  
+  if ($debug==true)
+    $key = file_get_contents ($file);
+  else
+    //working dir in Drupal is /var/www/drupal/
+    $key = file_get_contents('sites/all/modules/custom/hours/' . $file); 
   // not included in github account for security. Uses digitalservices API key
   if(($key== NULL)||($key==""))
     return -1;
