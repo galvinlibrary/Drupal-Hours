@@ -59,7 +59,7 @@ function display_google_calendar_hours($calendar,$days){
 
     $items = get_calendar_data($url);
     if(($items== NULL)||($items=="")){
-      echo "No data found for " . date($dateFormat,time()+$hours24) .'.<br/>';
+      echo "<p>No data found for " . date($dateFormat,time()+$hours24) .'.</p>';
     }
     
     //start with defaults to fail gracefully
@@ -71,7 +71,8 @@ function display_google_calendar_hours($calendar,$days){
       $is24=false;
       // Google Calendar API v3 uses dateTime field if event is less than 24 hours, or date field if it is
       if (isset($item->start->dateTime)){
-        $startTime = substr($item->start->dateTime, 11,5);
+        //$startTime = substr($item->start->dateTime, 11,5);
+        $startTime = format_iit_time(date($timeFormat,strtotime(substr($item->start->dateTime, 11,5))));
         $endTime = format_iit_time(date($timeFormat,strtotime(substr($item->end->dateTime, 0,19))));
         $eventDate = date($dateFormat,strtotime($item->start->dateTime));
       }
@@ -80,15 +81,15 @@ function display_google_calendar_hours($calendar,$days){
         $eventDate = date($dateFormat,strtotime($item->start->date));
       }
 
-      echo "$eventDate:<br/>";
+      echo "<h1>$eventDate:</h1>";
       if ($is24){
-        echo "Galvin is open 24 hours"; 
+        echo "<p>Galvin is open 24 hours</p>"; 
       }
       elseif ($startTime=="00:00"){
-        echo "Galvin is open overnight until $endTime";
+        echo "<p>Galvin is open overnight until $endTime</p>";
       }
       else {
-        echo "Galvin is open from $startTime until $endTime";
+        echo "<p>Galvin is open from $startTime until $endTime</p>";
       }
     }
     $hours24 += 86400;
