@@ -1,6 +1,8 @@
 <?php
 
 $debug=true;
+$dateFormat="l, F j";
+$timeFormat="g:ia";
 date_default_timezone_set('America/Chicago');
 
 //Communications & Marketing format for times
@@ -39,9 +41,9 @@ function get_googleAPI_key(){
 
 // Using Google Calendar API v3. Parses JSON data from a public calendar.
 function display_google_calendar_hours($calendar,$days){
+  global $dateFormat, $timeFormat;
+
   $hours24=0;
-  $dateFormat="l, F j";
-  $timeFormat="g:ia";
   $key = get_googleAPI_key();
   if ($key==-1){
     echo "error getting API key";
