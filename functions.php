@@ -4,7 +4,6 @@ $debug=false;
 $dateFormat="l, F j";
 $timeFormat="g:ia";
 $now=time();
-$isOpen="";
 date_default_timezone_set('America/Chicago');
 
 //Communications & Marketing format for times
@@ -60,46 +59,57 @@ function get_calendar_data($calendar, $libraryDisplayName='Galvin', $dateToGet=0
 
 function format_calendar_data($dateData, $libraryDisplayName){// default is to use Galvin and today's Unix date
   global $debug, $now, $dateFormat, $timeFormat, $isOpen;
-
+  $isOpen=0;
   //start with defaults to fail gracefully
   $now=time();
   $startTime=0;
   $endTime=0;
   $msg="no data";
     foreach ($dateData as $item) {
+      // check for closed first
+        $title = $item->summary;
+        if ($debug)
+          echo "TITLE $title <br/>";
+        
+        if (stripos($title,"closed")) {
+          $msg=$title;
+          $isOpen=-1;
+          return $msg;
+        } 
+        
       // Google Calendar API v3 uses the date field if event is a full day long, or the dateTime field if it is less than 24 hours
-      if (isset($item->start->dateTime)){
-        //$startTime = substr($item->start->dateTime, 11,5);
+        if (isset($item->start->dateTime)){
         $tmpStart=strtotime(substr($item->start->dateTime, 0,16));
         $startTime = format_iit_time(date($timeFormat,$tmpStart));
         $tmpEnd=strtotime(substr($item->end->dateTime, 0,16));
         $endTime = format_iit_time(date($timeFormat,$tmpEnd));
-        $eventDate = date($dateFormat,strtotime($item->start->dateTime));
         if ($debug){
-          echo "<p>$tmpStart start  $startTime</p>";
-          echo "<p>$tmpEnd end $endTime</p>";
+          echo "<p>$tmpStart start  $startTime " . "</p>";
+          echo "<p>$tmpEnd end $endTime " . $item->end->dateTime . "</p>";
           echo "<p>$now now</p>";
-          
+        }
+        if ($endTime=="12a.m."){
+          if ($startTime=="12a.m.")
+            $msg="Open 24 hours";
+          else
+            $msg="Open from $startTime - overnight";
+        }
+        else {
+          $msg="Today's hours: $startTime - $endTime"; 
         }
       }
-      else {
-        $msg="$libraryDisplayName is open 24 hours today";
+      else{
+        $tmpStart=strtotime(substr($item->start->date, 0,16));
+        $tmpEnd=strtotime(substr($item->end->date, 0,16));
       }
 
-      if ($startTime=="00:00"){
-        $msg="$libraryDisplayName is open overnight until $endTime";
-      }
-      else {
-        $msg="$libraryDisplayName is open from $startTime until $endTime today";
-      }
     }// end foreach
     
-    
-    if ( ($now >= $tmpStart) && ($now <= $tmpEnd) ){
-      $isOpen = true;
+    if ( ($now < $tmpStart) || ($now > $tmpEnd)|| ($isOpen == -1) ){
+      $isOpen = 0;
     }
     else {
-      $isOpen = false;
+      $isOpen = 1;
     }    
     return $msg;
 }
@@ -109,7 +119,7 @@ function display_todays_hours_info($calendar, $libraryDisplayName='Galvin'){
   global $dateFormat, $timeFormat, $isOpen;
   $openMsg="";
   $msg=get_calendar_data($calendar, $libraryDisplayName);
-  if ($isOpen==false){
+  if ($isOpen<=0){
     $openMsg="<span=\"closed\">closed</span>";   
   }          
   else {
