@@ -72,7 +72,7 @@ function check_if_open($item){
     $unixEnd=strtotime(substr($item->end->date, 0,16));
   }
 
-  if ( ($now <= $unixStart) || ($now >= $unixEnd) ){
+  if ( ($now < $unixStart) || ($now > $unixEnd) ){
     $isOpen = 0;
   }
   else {
