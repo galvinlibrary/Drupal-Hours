@@ -1,6 +1,6 @@
 <?php
 
-$debug=true;
+$debug=false;
 $dateFormat="l, F j";
 $timeFormat="g:ia";
 date_default_timezone_set('America/Chicago');
