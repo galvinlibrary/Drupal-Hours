@@ -161,5 +161,3 @@ function display_todays_hours_info($calendar){
   echo "<p>$msg</p>";
 }
 
-?>
-
