@@ -1,6 +1,6 @@
 <?php
 
-$debug=false;
+$debug=true;
 $dateFormat="l, F j";
 $timeFormat="g:ia";
 $now=time();
@@ -78,30 +78,36 @@ function format_calendar_data($dateData, $libraryDisplayName){// default is to u
         } 
         
       // Google Calendar API v3 uses the date field if event is a full day long, or the dateTime field if it is less than 24 hours
-        if (isset($item->start->dateTime)){
-        $tmpStart=strtotime(substr($item->start->dateTime, 0,16));
-        $startTime = format_iit_time(date($timeFormat,$tmpStart));
-        $tmpEnd=strtotime(substr($item->end->dateTime, 0,16));
-        $endTime = format_iit_time(date($timeFormat,$tmpEnd));
-        if ($debug){
-          echo "<p>$tmpStart start  $startTime " . "</p>";
-          echo "<p>$tmpEnd end $endTime " . $item->end->dateTime . "</p>";
-          echo "<p>$now now</p>";
+      if (isset($item->start->dateTime)){
+          $tmpStart=strtotime(substr($item->start->dateTime, 0,16));
+          $tmpEnd=strtotime(substr($item->end->dateTime, 0,16));
         }
-        if ($endTime=="12a.m."){
-          if ($startTime=="12a.m.")
-            $msg="Open 24 hours";
-          else
-            $msg="Open from $startTime - overnight";
-        }
-        else {
-          $msg="Today's hours: $startTime - $endTime"; 
-        }
-      }
       elseif (isset($item->start->date)){
         $tmpStart=strtotime(substr($item->start->date, 0,16));
         $tmpEnd=strtotime(substr($item->end->date, 0,16));
       }
+      else{
+        return $msg;
+      }
+      $startTime = format_iit_time(date($timeFormat,$tmpStart));
+      $endTime = format_iit_time(date($timeFormat,$tmpEnd));
+      
+      if ($debug){
+        echo "<p>$tmpStart start  $startTime " . "</p>";
+        echo "<p>$tmpEnd end $endTime </p>";
+        echo "<p>$now now</p>";
+      }      
+      
+      if ($endTime=="12a.m."){
+        if ($startTime=="12a.m.")
+          $msg="Open 24 hours";
+        else
+          $msg="Open from $startTime - overnight";
+      }
+      else {
+        $msg="Today's hours: $startTime - $endTime"; 
+      }
+      
       
       if ( ($now < $tmpStart) || ($now > $tmpEnd)|| ($isOpen == -1) ){
         $isOpen = 0;
