@@ -3,7 +3,6 @@
 $debug=true;
 $dateFormat="l, F j";
 $timeFormat="g:ia";
-$now=time();
 date_default_timezone_set('America/Chicago');
 
 //Communications & Marketing format for times
@@ -55,6 +54,18 @@ function get_calendar_data($calendar, $libraryDisplayName='Galvin', $dateToGet=0
     $msg=format_calendar_data($dateData, $libraryDisplayName);
     return $msg;
   }
+}
+
+function check_if_open($unixStart, $unixEnd){   
+  global $isOpen;
+  
+  $now=time();
+  if ( ($now <= $unixStart) || ($now >= $unixEnd) ){
+    $isOpen = 0;
+  }
+  else {
+    $isOpen = 1;
+  }      
 }
 
 function format_calendar_data($dateData){// default is to use Galvin and today's Unix date
@@ -111,12 +122,8 @@ function format_calendar_data($dateData){// default is to use Galvin and today's
         $msg="Today's hours: $startTime - $endTime"; // eg: Saturday 8:30am-5pm
       }
 
-      if ( (($now < $tmpStart) || ($now > $tmpEnd)) && ($isOpen !=-1) ){
-        $isOpen = 0;
-      }
-      else {
-        $isOpen = 1;
-      }    
+      check_if_open($tmpStart, $tmpEnd);
+
       return $msg; // return hours info
     } // end library open
 
