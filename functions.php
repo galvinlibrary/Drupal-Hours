@@ -57,7 +57,7 @@ function get_calendar_data($calendar, $libraryDisplayName='Galvin', $dateToGet=0
 }
 
 function check_if_open($unixStart, $unixEnd){   
-  global $isOpen;
+  global $isOpen, $debug;
   
   $now=time();
   if ( ($now <= $unixStart) || ($now >= $unixEnd) ){
@@ -66,10 +66,36 @@ function check_if_open($unixStart, $unixEnd){
   else {
     $isOpen = 1;
   }      
+  
+  if ($debug){
+    echo "<p>$unixStart start " . "</p>";
+    echo "<p>$unixEnd end </p>";
+    echo "<p>$now now</p>";
+    echo "<p>isOpen = $isOpen</p>";
+  }   
 }
 
+function format_calendar_message($startTime,$endTime){
+  
+  if ($endTime=="12a.m."){ // don't use 12am time to avoid confusion
+    if ($startTime=="12a.m."){ // eg: Tuesday 12am-12am
+      $msg="Open 24 hours";
+    }
+    else{
+      $msg="Open from $startTime - overnight"; // eg: Sunday 12pm-12am
+    }
+  }
+  else { // normal 
+    $msg="Today's hours: $startTime - $endTime"; // eg: Saturday 8:30am-5pm
+  }
+  
+  return $msg;
+  
+}
+
+
 function format_calendar_data($dateData){// default is to use Galvin and today's Unix date
-  global $debug, $now, $dateFormat, $timeFormat, $isOpen;
+  global $debug, $now, $timeFormat, $isOpen;
   $isOpen=0;
   $now=time();
   $startTime=0;
@@ -100,27 +126,11 @@ function format_calendar_data($dateData){// default is to use Galvin and today's
         $tmpStart=strtotime(substr($item->start->date, 0,16));
         $tmpEnd=strtotime(substr($item->end->date, 0,16));
       }
-
+      
       $startTime = format_iit_time(date($timeFormat,$tmpStart));
       $endTime = format_iit_time(date($timeFormat,$tmpEnd));
-
-      if ($debug){
-        echo "<p>$tmpStart start  $startTime " . "</p>";
-        echo "<p>$tmpEnd end $endTime </p>";
-        echo "<p>$now now</p>";
-      }      
-
-      if (($endTime=="12a.m.") && ($isOpen !=-1)){ // don't use 12am time to avoid confusion
-        if ($startTime=="12a.m."){ // eg: Tuesday 12am-12am
-          $msg="Open 24 hours";
-        }
-        else{
-          $msg="Open from $startTime - overnight"; // eg: Sunday 12pm-12am
-        }
-      }
-      else { // normal 
-        $msg="Today's hours: $startTime - $endTime"; // eg: Saturday 8:30am-5pm
-      }
+      
+      $msg=format_calendar_message($startTime, $endTime);
 
       check_if_open($tmpStart, $tmpEnd);
 
@@ -147,7 +157,7 @@ function display_todays_hours_info($calendar){
     $openMsg="<span=\"open\">open</span>";
   }
   echo "<p class=today>".date($dateFormat).", " . format_iit_time(date($timeFormat))."</p>";
-  echo "<p>Currently: $openMsg  $isOpen</p>";
+  echo "<p>Currently: $openMsg</p>";
   echo "<p>$msg</p>";
 }
 
