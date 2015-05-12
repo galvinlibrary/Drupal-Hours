@@ -33,32 +33,9 @@ function get_googleAPI_key(){
   }
 }
 
+
 //retrieve JSON data from a Google Calendar (public)
 function get_calendar_data($calendar, $dateToGet=0){
-
-  $key = get_googleAPI_key();
-  $APIformat="Y-m-d";
-  $timeMin = date($APIformat,time()+$dateToGet) . 'T00:00:00.000Z';
-  $timeMax = date($APIformat,time()+$dateToGet) . 'T23:59:00.000Z';
-  $url='https://www.googleapis.com/calendar/v3/calendars/' . $calendar . '/events?singleEvents=true&orderby=startTime&timeMin=' . 
-      $timeMin . '&timeMax=' . $timeMax . '&maxResults=1&key=' . $key;
-    //this works more reliably than only getting one event
-
-  $jsonFile = file_get_contents($url);
-  if (!$jsonFile) {
-      trigger_error('NO DATA returned from url.', E_USER_NOTICE);
-  }
-  else {
-    // convert the string to a json object
-    $jsonObj = json_decode($jsonFile);
-    $dateData = $jsonObj->items;
-    $msg=format_calendar_data($dateData);
-    return $msg;
-  }
-}
-
-//retrieve JSON data from a Google Calendar (public)
-function get_cal_data($calendar, $dateToGet=0){
   $debug=true;
   $key = get_googleAPI_key();
   $APIformat="Y-m-d";
@@ -105,24 +82,16 @@ function check_if_open($item){
   return $isOpen;
 }
 
-function xcheck_if_open($unixStart, $unixEnd){   
-
-  
-  $now=time();
-  if ( ($now <= $unixStart) || ($now >= $unixEnd) ){
-    $isOpen = 0;
-  }
+function format_open_msg($isOpen){
+  if ($isOpen<=0){
+    $openMsg="<span=\"closed\">closed</span>";   
+  }          
   else {
-    $isOpen = 1;
-  }      
-  
-  if ($debug){
-    echo "<p>$unixStart start " . "</p>";
-    echo "<p>$unixEnd end </p>";
-    echo "<p>$now now</p>";
-    echo "<p>isOpen = $isOpen</p>";
-  }   
+    $openMsg="<span=\"open\">open</span>";
+  }
+  return $openMsg;
 }
+
 
 function format_hours_message($startTime,$endTime){
   
@@ -141,17 +110,6 @@ function format_hours_message($startTime,$endTime){
   return $msg;
   
 }
-
-function format_open_msg($isOpen){
-  if ($isOpen<=0){
-    $openMsg="<span=\"closed\">closed</span>";   
-  }          
-  else {
-    $openMsg="<span=\"open\">open</span>";
-  }
-  return $openMsg;
-}
-
 
 function format_hours_data($dateData){// default is to use Galvin and today's Unix date
   $msg="no data available";
@@ -194,77 +152,3 @@ function format_hours_data($dateData){// default is to use Galvin and today's Un
         
 }// end function
 
-
-
-function format_calendar_data($dateData){// default is to use Galvin and today's Unix date
-
-  $isOpen=0;
-  $now=time();
-  $startTime=0;
-  $endTime=0;
-  $msg="no data available";
-  
-// error gracefully if no data
-    if (count($dateData)<=0){
-      return $msg;
-    }
-    else{
-      $item = $dateData[0]; // no need to loop. just get first object
-    }     
-    $title = $item->summary;
-    if ($debug){
-      echo "<p>TITLE: $title </p>";
-    }
-
-    if (stripos($title,"closed")===false) { // library open (verify identical FALSE to avoid "false false")
-
-        // Google Calendar API v3 uses the date field if event is a full day long, or the dateTime field if it is less than 24 hours  
-      if (isset($item->start->dateTime)){ // non 24-hour event
-          $tmpStart=strtotime(substr($item->start->dateTime, 0,16));
-          $tmpEnd=strtotime(substr($item->end->dateTime, 0,16));
-      }
-
-      else{ // all day event
-        $tmpStart=strtotime(substr($item->start->date, 0,16));
-        $tmpEnd=strtotime(substr($item->end->date, 0,16));
-      }
-      
-      $startTime = format_iit_time(date($timeFormat,$tmpStart));
-      $endTime = format_iit_time(date($timeFormat,$tmpEnd));
-      
-      $msg=format_calendar_message($startTime, $endTime);
-
-      check_if_open($tmpStart, $tmpEnd);
-
-      return $msg; // return hours info
-    } // end library open
-
-    // library is closed
-    else {
-      $isOpen=0;
-      return $title;
-    }
-        
-}// end function
-
-
-function display_todays_hours_info($calendar){
-
-  $openMsg="";
-  $msg=get_calendar_data($calendar);
-  if ($isOpen<=0){
-    $openMsg="<span=\"closed\">closed</span>";   
-  }          
-  else {
-    $openMsg="<span=\"open\">open</span>";
-  }
-  echo "<p class=today>".date($dateFormat).", " . format_iit_time(date($timeFormat))."</p>";
-  echo "<p>Currently: $openMsg</p>";
-  echo "<p>$msg</p>";
-}
-
-function display_hours($cal){
-  $message=get_calendar_data($cal);
-   
-  return $message;
-}
