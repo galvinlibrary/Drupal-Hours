@@ -43,9 +43,7 @@ function get_calendar_data($calendar, $dateToGet=0){
   $url='https://www.googleapis.com/calendar/v3/calendars/' . $calendar . '/events?singleEvents=true&orderby=startTime&timeMin=' . 
       $timeMin . '&timeMax=' . $timeMax . '&maxResults=1&key=' . $key;
     //this works more reliably than only getting one event
-  if ($debug)
-    echo "<p>$url</p>";
-  
+
   $jsonFile = file_get_contents($url);
   if (!$jsonFile) {
       trigger_error('NO DATA returned from url.', E_USER_NOTICE);
@@ -69,8 +67,6 @@ function get_cal_data($calendar, $dateToGet=0){
   $url='https://www.googleapis.com/calendar/v3/calendars/' . $calendar . '/events?singleEvents=true&orderby=startTime&timeMin=' . 
       $timeMin . '&timeMax=' . $timeMax . '&maxResults=1&key=' . $key;
     //this works more reliably than only getting one event
-  if ($debug)
-    echo "<p>$url</p>";
   
   $jsonFile = file_get_contents($url);
   if (!$jsonFile) {
@@ -158,7 +154,6 @@ function format_open_msg($isOpen){
 
 
 function format_hours_data($dateData){// default is to use Galvin and today's Unix date
-  $debug=true;
   $msg="no data available";
   $timeFormat="g:ia";
   
@@ -170,9 +165,6 @@ function format_hours_data($dateData){// default is to use Galvin and today's Un
       $item = $dateData[0]; // no need to loop. just get first object
     }     
     $title = $item->summary;
-    if ($debug){
-      echo "<p>TITLE: $title </p>";
-    }
 
     if (stripos($title,"closed")===false) { // library open (verify identical FALSE to avoid "false false")
 
