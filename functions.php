@@ -1,9 +1,13 @@
 <?php
-
-$debug=false;
-$dateFormat="l, F j";
-$timeFormat="g:ia";
 date_default_timezone_set('America/Chicago');
+
+
+function get_and_format_todays_date_time(){
+  $dateFormat="l, F j";
+  $timeFormat="g:ia";
+  $today = date($dateFormat).", " . format_iit_time(date($timeFormat));
+  return $today;
+}
 
 //Communications & Marketing format for times
 function format_iit_time ($time){ 
@@ -31,7 +35,7 @@ function get_googleAPI_key(){
 
 //retrieve JSON data from a Google Calendar (public)
 function get_calendar_data($calendar, $dateToGet=0){
-  global $debug;
+
   $key = get_googleAPI_key();
   $APIformat="Y-m-d";
   $timeMin = date($APIformat,time()+$dateToGet) . 'T00:00:00.000Z';
@@ -81,9 +85,32 @@ function get_cal_data($calendar, $dateToGet=0){
 }
 
 
+function check_if_open($item){   
+  
+  $now=time();
+  
+  if (isset($item->start->dateTime)){ // non 24-hour event
+      $unixStart=strtotime(substr($item->start->dateTime, 0,16));
+      $unixEnd=strtotime(substr($item->end->dateTime, 0,16));
+  }
 
-function check_if_open($unixStart, $unixEnd){   
-  global $isOpen, $debug;
+  else{ // all day event
+    $unixStart=strtotime(substr($item->start->date, 0,16));
+    $unixEnd=strtotime(substr($item->end->date, 0,16));
+  }
+
+  if ( ($now <= $unixStart) || ($now >= $unixEnd) ){
+    $isOpen = 0;
+  }
+  else {
+    $isOpen = 1;
+  }      
+  
+  return $isOpen;
+}
+
+function xcheck_if_open($unixStart, $unixEnd){   
+
   
   $now=time();
   if ( ($now <= $unixStart) || ($now >= $unixEnd) ){
@@ -118,6 +145,17 @@ function format_hours_message($startTime,$endTime){
   return $msg;
   
 }
+
+function format_open_msg($isOpen){
+  if ($isOpen<=0){
+    $openMsg="<span=\"closed\">closed</span>";   
+  }          
+  else {
+    $openMsg="<span=\"open\">open</span>";
+  }
+  return $openMsg;
+}
+
 
 function format_hours_data($dateData){// default is to use Galvin and today's Unix date
   $debug=true;
@@ -167,7 +205,7 @@ function format_hours_data($dateData){// default is to use Galvin and today's Un
 
 
 function format_calendar_data($dateData){// default is to use Galvin and today's Unix date
-  global $debug, $now, $timeFormat, $isOpen;
+
   $isOpen=0;
   $now=time();
   $startTime=0;
@@ -219,7 +257,7 @@ function format_calendar_data($dateData){// default is to use Galvin and today's
 
 
 function display_todays_hours_info($calendar){
-  global $dateFormat, $timeFormat, $isOpen;
+
   $openMsg="";
   $msg=get_calendar_data($calendar);
   if ($isOpen<=0){
