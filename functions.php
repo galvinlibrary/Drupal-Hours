@@ -70,61 +70,61 @@ function format_calendar_data($dateData){// default is to use Galvin and today's
       return $msg;
     }
     else{
-      $item = $dateData[0]; // no need to loop. just get first entry
+      $item = $dateData[0]; // no need to loop. just get first object
     }     
-      $title = $item->summary;
-      if ($debug)
-        echo "<p>TITLE: $title </p>";
-      
-      if (stripos($title,"closed")===false) { // library open (verify identical FALSE to avoid "false false")
+    $title = $item->summary;
+    if ($debug){
+      echo "<p>TITLE: $title </p>";
+    }
 
-          // Google Calendar API v3 uses the date field if event is a full day long, or the dateTime field if it is less than 24 hours  
-        if (isset($item->start->dateTime)){ // non 24-hour event
-            $tmpStart=strtotime(substr($item->start->dateTime, 0,16));
-            $tmpEnd=strtotime(substr($item->end->dateTime, 0,16));
-        }
+    if (stripos($title,"closed")===false) { // library open (verify identical FALSE to avoid "false false")
 
-        elseif (isset($item->start->date)){ // all day event
-          $tmpStart=strtotime(substr($item->start->date, 0,16));
-          $tmpEnd=strtotime(substr($item->end->date, 0,16));
+        // Google Calendar API v3 uses the date field if event is a full day long, or the dateTime field if it is less than 24 hours  
+      if (isset($item->start->dateTime)){ // non 24-hour event
+          $tmpStart=strtotime(substr($item->start->dateTime, 0,16));
+          $tmpEnd=strtotime(substr($item->end->dateTime, 0,16));
+      }
+
+      else{ // all day event
+        $tmpStart=strtotime(substr($item->start->date, 0,16));
+        $tmpEnd=strtotime(substr($item->end->date, 0,16));
+      }
+
+      $startTime = format_iit_time(date($timeFormat,$tmpStart));
+      $endTime = format_iit_time(date($timeFormat,$tmpEnd));
+
+      if ($debug){
+        echo "<p>$tmpStart start  $startTime " . "</p>";
+        echo "<p>$tmpEnd end $endTime </p>";
+        echo "<p>$now now</p>";
+      }      
+
+      if (($endTime=="12a.m.") && ($isOpen !=-1)){ // don't use 12am time to avoid confusion
+        if ($startTime=="12a.m."){ // eg: Tuesday 12am-12am
+          $msg="Open 24 hours";
         }
         else{
-          return $msg; // error gracefully if no data
+          $msg="Open from $startTime - overnight"; // eg: Sunday 12pm-12am
         }
-
-        $startTime = format_iit_time(date($timeFormat,$tmpStart));
-        $endTime = format_iit_time(date($timeFormat,$tmpEnd));
-
-        if ($debug){
-          echo "<p>$tmpStart start  $startTime " . "</p>";
-          echo "<p>$tmpEnd end $endTime </p>";
-          echo "<p>$now now</p>";
-        }      
-
-        if (($endTime=="12a.m.") && ($isOpen !=-1)){ // don't use 12am time to avoid confusion
-          if ($startTime=="12a.m.") // eg: Tuesday 12am-12am
-            $msg="Open 24 hours";
-          else
-            $msg="Open from $startTime - overnight"; // eg: Sunday 12pm-12am
-        }
-        else { // normal 
-          $msg="Today's hours: $startTime - $endTime"; // eg: Saturday 8:30am-5pm
-        }
-
-        if ( (($now < $tmpStart) || ($now > $tmpEnd)) && ($isOpen !=-1) ){
-          $isOpen = 0;
-        }
-        else {
-          $isOpen = 1;
-        }    
-        return $msg; // return hours info
-      } // end library open
-
-      // library is closed
-      else {
-        $isOpen=0;
-        return $title;
       }
+      else { // normal 
+        $msg="Today's hours: $startTime - $endTime"; // eg: Saturday 8:30am-5pm
+      }
+
+      if ( (($now < $tmpStart) || ($now > $tmpEnd)) && ($isOpen !=-1) ){
+        $isOpen = 0;
+      }
+      else {
+        $isOpen = 1;
+      }    
+      return $msg; // return hours info
+    } // end library open
+
+    // library is closed
+    else {
+      $isOpen=0;
+      return $title;
+    }
         
 }// end function
 
