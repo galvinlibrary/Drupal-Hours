@@ -71,7 +71,7 @@ function format_calendar_data($dateData, $libraryDisplayName){// default is to u
         if ($debug)
           echo "TITLE $title <br/>";
         
-        if (stripos($title,"closed")) {
+        if (stripos($title,"closed")>=0) {
           $msg=$title;
           $isOpen=-1;
           return $msg;
