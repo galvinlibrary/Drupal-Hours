@@ -64,7 +64,7 @@ function format_calendar_data($dateData, $libraryDisplayName){// default is to u
   $now=time();
   $startTime=0;
   $endTime=0;
-  $msg="no data";
+  $msg="no data retrieved";
     foreach ($dateData as $item) {
       // check for closed first
         $title = $item->summary;
