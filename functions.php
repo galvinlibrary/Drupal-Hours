@@ -15,7 +15,7 @@ function format_iit_time ($time){
 
 //load developer key
 function get_googleAPI_key(){
-  $localDebug=true;
+  $localDebug=false;
   $file='GoogleAPIkey.txt';
   
   if ($localDebug==true)
