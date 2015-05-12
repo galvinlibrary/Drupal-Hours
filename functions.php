@@ -152,3 +152,17 @@ function format_hours_data($dateData){// default is to use Galvin and today's Un
         
 }// end function
 
+function galvin_hours_block($calendar){
+  $dataObj=get_calendar_data($calendar);
+
+  if (count($dataObj)>0){
+    $hours = format_hours_data($dataObj);
+    $isOpen = check_if_open($dataObj[0]);
+    $openMsg = format_open_msg($isOpen);
+    $message = "Currently: $openMsg</p><p>$hours</p>";
+  }
+  else{
+    $message = "<p>Library hours cannot be displayed at this time.</p>";
+  }
+  return $message;
+}
