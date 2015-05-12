@@ -64,7 +64,7 @@ function format_calendar_data($dateData, $libraryDisplayName){// default is to u
   $now=time();
   $startTime=0;
   $endTime=0;
-  $msg="no data retrieved";
+  $msg="no data available";
     foreach ($dateData as $item) {
       // check for closed first
         $title = $item->summary;
@@ -98,19 +98,20 @@ function format_calendar_data($dateData, $libraryDisplayName){// default is to u
           $msg="Today's hours: $startTime - $endTime"; 
         }
       }
-      else{
+      elseif (isset($item->start->date)){
         $tmpStart=strtotime(substr($item->start->date, 0,16));
         $tmpEnd=strtotime(substr($item->end->date, 0,16));
       }
-
+      
+      if ( ($now < $tmpStart) || ($now > $tmpEnd)|| ($isOpen == -1) ){
+        $isOpen = 0;
+      }
+      else {
+        $isOpen = 1;
+      }    
+      
     }// end foreach
     
-    if ( ($now < $tmpStart) || ($now > $tmpEnd)|| ($isOpen == -1) ){
-      $isOpen = 0;
-    }
-    else {
-      $isOpen = 1;
-    }    
     return $msg;
 }
 
