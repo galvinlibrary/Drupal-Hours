@@ -15,23 +15,22 @@ function format_iit_time ($time){
 
 //load developer key
 function get_googleAPI_key(){
-  $localDebug=false;
   $file='GoogleAPIkey.txt';
-  
-  if ($localDebug==true)
-    $key = file_get_contents ($file);
-  else
-    //working dir in Drupal is /var/www/drupal/
-    $key = file_get_contents('sites/all/modules/custom/hours/' . $file); 
-  // not included in github account for security. Uses digitalservices API key
-  if(($key== NULL)||($key==""))
+  $drupalDir='sites/all/modules/custom/display_hours/';
+  if (file_exists($drupalDir) == true){
+    $file = $drupalDir . $file; 
+  }
+  $key = file_get_contents($file); 
+  if(($key== NULL)||($key=="")){
     trigger_error('Google API key not found', E_USER_NOTICE);
-  else
+  }
+  else {
     return $key;
+  }
 }
 
 //retrieve JSON data from a Google Calendar (public)
-function get_calendar_data($calendar, $libraryDisplayName='Galvin', $dateToGet=0){
+function get_calendar_data($calendar, $dateToGet=0){
   global $debug;
   $key = get_googleAPI_key();
   $APIformat="Y-m-d";
@@ -51,10 +50,37 @@ function get_calendar_data($calendar, $libraryDisplayName='Galvin', $dateToGet=0
     // convert the string to a json object
     $jsonObj = json_decode($jsonFile);
     $dateData = $jsonObj->items;
-    $msg=format_calendar_data($dateData, $libraryDisplayName);
+    $msg=format_calendar_data($dateData);
     return $msg;
   }
 }
+
+//retrieve JSON data from a Google Calendar (public)
+function get_cal_data($calendar, $dateToGet=0){
+  $debug=true;
+  $key = get_googleAPI_key();
+  $APIformat="Y-m-d";
+  $timeMin = date($APIformat,time()+$dateToGet) . 'T00:00:00.000Z';
+  $timeMax = date($APIformat,time()+$dateToGet) . 'T23:59:00.000Z';
+  $url='https://www.googleapis.com/calendar/v3/calendars/' . $calendar . '/events?singleEvents=true&orderby=startTime&timeMin=' . 
+      $timeMin . '&timeMax=' . $timeMax . '&maxResults=1&key=' . $key;
+    //this works more reliably than only getting one event
+  if ($debug)
+    echo "<p>$url</p>";
+  
+  $jsonFile = file_get_contents($url);
+  if (!$jsonFile) {
+      trigger_error('NO DATA returned from url.', E_USER_NOTICE);
+  }
+  else {
+    // convert the string to a json object
+    $jsonObj = json_decode($jsonFile);
+    $dateData = $jsonObj->items;
+    return $dateData;
+  }
+}
+
+
 
 function check_if_open($unixStart, $unixEnd){   
   global $isOpen, $debug;
@@ -75,7 +101,7 @@ function check_if_open($unixStart, $unixEnd){
   }   
 }
 
-function format_calendar_message($startTime,$endTime){
+function format_hours_message($startTime,$endTime){
   
   if ($endTime=="12a.m."){ // don't use 12am time to avoid confusion
     if ($startTime=="12a.m."){ // eg: Tuesday 12am-12am
@@ -92,6 +118,52 @@ function format_calendar_message($startTime,$endTime){
   return $msg;
   
 }
+
+function format_hours_data($dateData){// default is to use Galvin and today's Unix date
+  $debug=true;
+  $msg="no data available";
+  $timeFormat="g:ia";
+  
+// error gracefully if no data
+    if (count($dateData)<=0){
+      return $msg;
+    }
+    else{
+      $item = $dateData[0]; // no need to loop. just get first object
+    }     
+    $title = $item->summary;
+    if ($debug){
+      echo "<p>TITLE: $title </p>";
+    }
+
+    if (stripos($title,"closed")===false) { // library open (verify identical FALSE to avoid "false false")
+
+        // Google Calendar API v3 uses the date field if event is a full day long, or the dateTime field if it is less than 24 hours  
+      if (isset($item->start->dateTime)){ // non 24-hour event
+          $tmpStart=strtotime(substr($item->start->dateTime, 0,16));
+          $tmpEnd=strtotime(substr($item->end->dateTime, 0,16));
+      }
+
+      else{ // all day event
+        $tmpStart=strtotime(substr($item->start->date, 0,16));
+        $tmpEnd=strtotime(substr($item->end->date, 0,16));
+      }
+      
+      $startTime = format_iit_time(date($timeFormat,$tmpStart));
+      $endTime = format_iit_time(date($timeFormat,$tmpEnd));
+      
+      $msg=format_hours_message($startTime, $endTime);
+
+      return $msg; // return hours info
+    } // end library open
+
+    // library is closed
+    else {
+      return $title;
+    }
+        
+}// end function
+
 
 
 function format_calendar_data($dateData){// default is to use Galvin and today's Unix date
@@ -161,3 +233,8 @@ function display_todays_hours_info($calendar){
   echo "<p>$msg</p>";
 }
 
+function display_hours($cal){
+  $message=get_calendar_data($cal);
+   
+  return $message;
+}
