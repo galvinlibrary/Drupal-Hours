@@ -84,10 +84,10 @@ function check_if_open($item){
 
 function format_open_msg($isOpen){
   if ($isOpen<=0){
-    $openMsg="<span class=\"closed\">closed</span>";   
+    $openMsg="<span class=\"closed\">CLOSED</span>";   
   }          
   else {
-    $openMsg="<span class=\"open\">open</span>";
+    $openMsg="<span class=\"open\">OPEN</span>";
   }
   return $openMsg;
 }
