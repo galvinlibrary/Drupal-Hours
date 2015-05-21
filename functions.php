@@ -16,28 +16,29 @@ function format_iit_time ($time){
 	$time = str_replace('pm','p.m.',$time);
 	return $time;
 }
-
+//MK - no longer needed. environment variable is set directly below.
 //load developer key
-function get_googleAPI_key(){
-  $file='GoogleAPIkey.txt';
-  $drupalDir='sites/all/modules/custom/display_hours/';
-  if (file_exists($drupalDir) == true){
-    $file = $drupalDir . $file; 
-  }
-  $key = file_get_contents($file); 
-  if(($key== NULL)||($key=="")){
-    trigger_error('Google API key not found', E_USER_NOTICE);
-  }
-  else {
-    return $key;
-  }
-}
+//function get_googleAPI_key(){
+// $file = getenv('GOOGLE_API');
+//  $drupalDir='sites/all/modules/custom/display_hours/';
+//  if (file_exists($drupalDir) == true){
+//    $file = $drupalDir . $file; 
+//  }
+//  $key = file_get_contents($file); 
+//  if(($key== NULL)||($key=="")){
+//    trigger_error('Google API key not found', E_USER_NOTICE);
+//  }
+//  else {
+//    return $key;
+//  }
+//}
 
 
 //retrieve JSON data from a Google Calendar (public)
 function get_calendar_data($calendar, $dateToGet=0){
   $debug=true;
-  $key = get_googleAPI_key();
+//  $key = get_googleAPI_key();
+  $key = getenv('GOOGLE_API');
   $APIformat="Y-m-d";
   $timeMin = date($APIformat,time()+$dateToGet) . 'T00:00:00.000Z';
   $timeMax = date($APIformat,time()+$dateToGet) . 'T23:59:00.000Z';
