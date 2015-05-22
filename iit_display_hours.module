@@ -10,7 +10,7 @@ function iit_display_hours_block_info() {
   return $blocks;
 }
 
-function test_msg($isOpen){
+function iit_display_hours_msg($isOpen){
   if ($isOpen<=0){
     $openMsg="CLOSED";   
   }          
@@ -25,7 +25,7 @@ function iit_display_hours_block_view($delta = '') {
   global $user;
   $account = $user;
   $block['content'] = t('The library is @test',array(
-    '@test' => test_msg(1)
+    '@test' => iit_display_hours_msg(1)
   ));
   return $block;
 }
