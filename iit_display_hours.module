@@ -3,8 +3,8 @@
  * Implements hook_block_info.
  */
 function iit_display_hours_block_info() {
-  $blocks['first'] = array(
-    'info' => t('First block'),
+  $blocks['hours'] = array(
+    'info' => t('IIT Display Library Hours'),
     'cache' => DRUPAL_NO_CACHE
   );
   return $blocks;
