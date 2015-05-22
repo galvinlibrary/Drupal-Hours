@@ -1,0 +1,7 @@
+name = Display Library Hours
+description = Fetch and display hours from a public Google calendar
+package = IIT Paul V. Galvin Library
+core = 7.x
+version = VERSION
+files[] = iit_display_hours.module
+
