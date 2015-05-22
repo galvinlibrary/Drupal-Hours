@@ -2,15 +2,15 @@
 date_default_timezone_set('America/Chicago');
 
 
-function get_and_format_todays_date_time(){
+function iit_display_hours_get_and_format_todays_date_time(){
   $dateFormat="l, F j";
   $timeFormat="g:ia";
-  $today = date($dateFormat).", " . format_iit_time(date($timeFormat));
+  $today = date($dateFormat).", " . format_time(date($timeFormat));
   return $today;
 }
 
 //Communications & Marketing format for times
-function format_iit_time ($time){ 
+function iit_display_hours_format_time ($time){ 
 	$time = str_replace(':00','',$time);
 	$time = str_replace('am','a.m.',$time);
 	$time = str_replace('pm','p.m.',$time);
@@ -18,7 +18,7 @@ function format_iit_time ($time){
 }
 
 //load developer key
-function get_googleAPI_key(){
+function iit_display_hours_get_googleAPI_key(){
   $file='GoogleAPIkey.txt';
   $drupalDir='sites/all/modules/custom/display_hours/';
   if (file_exists($drupalDir) == true){
@@ -35,7 +35,7 @@ function get_googleAPI_key(){
 
 
 //retrieve JSON data from a Google Calendar (public)
-function get_calendar_data($calendar, $dateToGet=0){
+function iit_display_hours_get_calendar_data($calendar, $dateToGet=0){
   $debug=true;
   $key = get_googleAPI_key();
   $APIformat="Y-m-d";
@@ -58,7 +58,7 @@ function get_calendar_data($calendar, $dateToGet=0){
 }
 
 
-function check_if_open($item){   
+function iit_display_hours_check_if_open($item){   
   
   $now=time();
   
@@ -82,7 +82,7 @@ function check_if_open($item){
   return $isOpen;
 }
 
-function format_open_msg($isOpen){
+function iit_display_hours_format_open_msg($isOpen){
   if ($isOpen<=0){
     $openMsg="<span class=\"closed\">CLOSED</span>";   
   }          
@@ -93,7 +93,7 @@ function format_open_msg($isOpen){
 }
 
 
-function format_hours_message($startTime,$endTime){
+function iit_display_hours_format_hours_message($startTime,$endTime){
   
   if ($endTime=="12a.m."){ // don't use 12am time to avoid confusion
     if ($startTime=="12a.m."){ // eg: Tuesday 12am-12am
@@ -111,7 +111,7 @@ function format_hours_message($startTime,$endTime){
   
 }
 
-function format_hours_data($dateData){// default is to use Galvin and today's Unix date
+function iit_display_hours_format_hours_data($dateData){// default is to use Galvin and today's Unix date
   $msg="no data available";
   $timeFormat="g:ia";
   
@@ -137,8 +137,8 @@ function format_hours_data($dateData){// default is to use Galvin and today's Un
         $tmpEnd=strtotime(substr($item->end->date, 0,16));
       }
       
-      $startTime = format_iit_time(date($timeFormat,$tmpStart));
-      $endTime = format_iit_time(date($timeFormat,$tmpEnd));
+      $startTime = format_time(date($timeFormat,$tmpStart));
+      $endTime = format_time(date($timeFormat,$tmpEnd));
       
       $msg=format_hours_message($startTime, $endTime);
 
@@ -152,7 +152,7 @@ function format_hours_data($dateData){// default is to use Galvin and today's Un
         
 }// end function
 
-function galvin_hours_block($calendar){
+function iit_display_hours_galvin_hours_block($calendar){
   $dataObj=get_calendar_data($calendar);
 
   if (count($dataObj)>0){
