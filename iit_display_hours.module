@@ -35,6 +35,7 @@ function iit_display_hours_format_message(){
 }
 
 function iit_display_hours_block_view($delta = '') {
+  $block['subject'] = t("Today's Hours");
   $block['content'] = t('@display_msg',array(
     '@display_msg' => iit_display_hours_format_message()
   ));
