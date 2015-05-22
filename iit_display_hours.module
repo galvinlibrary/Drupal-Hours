@@ -145,8 +145,6 @@ function iit_display_hours_format_hours_data($dateData){// default is to use Gal
 
 function iit_display_hours_format_message(){
   $galvinCal="iit.edu_8l0d8qd4qtfn7skmgkiu55uv58%40group.calendar.google.com";
-  
-  $message=iit_display_hours_get_and_format_todays_date_time();
 
   $dataObj=iit_display_hours_get_calendar_data($galvinCal);
 
@@ -166,7 +164,8 @@ function iit_display_hours_format_message(){
 
 function iit_display_hours_block_view($delta = '') {
   $block['subject'] = t("Today's Hours");
-  $block['content'] = t('@display_msg',array(
+  $block['content'] = t('@today @display_msg',array(
+    '@today' => iit_display_hours_get_and_format_todays_date_time(),
     '@display_msg' => iit_display_hours_format_message()
   ));
   return $block;
