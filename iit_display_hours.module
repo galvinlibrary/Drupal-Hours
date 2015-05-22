@@ -30,7 +30,7 @@ function iit_display_hours_get_and_format_todays_date_time(){
 //load developer key
 function get_googleAPI_key(){
   $file='GoogleAPIkey.txt';
-  $drupalDir='sites/all/modules/custom/display_hours/';
+  $drupalDir='sites/all/modules/custom/iit_display_hours/';
   if (file_exists($drupalDir) == true){
     $file = $drupalDir . $file; 
   }
@@ -100,6 +100,48 @@ function iit_display_hours_format_open_msg($isOpen){
   return $openMsg;
 }
 
+function iit_display_hours_format_hours_data($dateData){// default is to use Galvin and today's Unix date
+  $msg="no data available";
+  $timeFormat="g:ia";
+  
+// error gracefully if no data
+    if (count($dateData)<=0){
+      return $msg;
+    }
+    else{
+      $item = $dateData[0]; // no need to loop. just get first object
+    }     
+    $title = $item->summary;
+
+    if (stripos($title,"closed")===false) { // library open (verify identical FALSE to avoid "false false")
+
+        // Google Calendar API v3 uses the date field if event is a full day long, or the dateTime field if it is less than 24 hours  
+      if (isset($item->start->dateTime)){ // non 24-hour event
+          $tmpStart=strtotime(substr($item->start->dateTime, 0,16));
+          $tmpEnd=strtotime(substr($item->end->dateTime, 0,16));
+      }
+
+      else{ // all day event
+        $tmpStart=strtotime(substr($item->start->date, 0,16));
+        $tmpEnd=strtotime(substr($item->end->date, 0,16));
+      }
+      
+      $startTime = iit_display_hours_format_time(date($timeFormat,$tmpStart));
+      $endTime = iit_display_hours_format_time(date($timeFormat,$tmpEnd));
+      
+      $msg=iit_display_hours_format_open_msg($startTime, $endTime);
+
+      return $msg; // return hours info
+    } // end library open
+
+    // library is closed
+    else {
+      return $title;
+    }
+        
+}// end function
+
+
 
 function iit_display_hours_format_message(){
   $galvinCal="iit.edu_8l0d8qd4qtfn7skmgkiu55uv58%40group.calendar.google.com";
@@ -109,7 +151,7 @@ function iit_display_hours_format_message(){
   $dataObj=iit_display_hours_get_calendar_data($galvinCal);
 
   if (count($dataObj)>0){
-    $hours = format_hours_data($dataObj);
+    $hours = iit_display_hours_format_hours_data($dataObj);
     $isOpen = iit_display_hours_check_if_open($dataObj[0]);
     $openMsg = iit_display_hours_format_open_msg($isOpen);
     $message .= " Currently: $openMsg</p><p>$hours</p>";
