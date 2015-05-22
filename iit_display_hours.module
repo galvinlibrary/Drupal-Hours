@@ -10,22 +10,33 @@ function iit_display_hours_block_info() {
   return $blocks;
 }
 
-function iit_display_hours_msg($isOpen){
-  if ($isOpen<=0){
-    $openMsg="CLOSED";   
-  }          
-  else {
-    $openMsg="OPEN";
-  }
-  return $openMsg;
+//Communications & Marketing format for times
+function iit_display_hours_format_time ($time){ 
+	$time = str_replace(':00','',$time);
+	$time = str_replace('am','a.m.',$time);
+	$time = str_replace('pm','p.m.',$time);
+	return $time;
 }
 
 
+function iit_display_hours_get_and_format_todays_date_time(){
+  $dateFormat="l, F j";
+  $timeFormat="g:ia";
+  $today = date($dateFormat).", " . iit_display_hours_format_time(date($timeFormat));
+  return $today;
+}
+
+
+function iit_display_hours_format_message(){
+
+  $today=iit_display_hours_get_and_format_todays_date_time();
+  return $today;
+  
+}
+
 function iit_display_hours_block_view($delta = '') {
-  global $user;
-  $account = $user;
-  $block['content'] = t('The library is @test',array(
-    '@test' => iit_display_hours_msg(1)
+  $block['content'] = t('@display_msg',array(
+    '@display_msg' => iit_display_hours_format_message()
   ));
   return $block;
 }
