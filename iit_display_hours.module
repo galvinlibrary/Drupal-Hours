@@ -1,0 +1,34 @@
+<?php
+/**
+ * Implements hook_block_info.
+ */
+function first_block_info() {
+  $blocks['first'] = array(
+    'info' => t('First block'),
+    'cache' => DRUPAL_NO_CACHE
+  );
+  return $blocks;
+}
+
+function test_msg($isOpen){
+  if ($isOpen<=0){
+    $openMsg="CLOSED";   
+  }          
+  else {
+    $openMsg="OPEN";
+  }
+  return $openMsg;
+}
+
+
+function first_block_view($delta = '') {
+  global $user;
+  $account = $user;
+  $block['content'] = t('The library is @test',array(
+    '@test' => test_msg(1)
+  ));
+  return $block;
+}
+
+// http://www.wdtutorials.com/drupal-7/drupal-7-how-to-create-module-part-1#.VV47xvlVhBc
+// https://ezproxy.gl.iit.edu/login?url=http://dx.doi.org/10.1007/978-1-4302-2839-4
