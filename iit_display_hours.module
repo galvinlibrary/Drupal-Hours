@@ -140,7 +140,7 @@ function iit_display_hours_format_todays_hours($startTime,$endTime){
     }
   }
   else { // normal 
-    $msg="Today's hours: $startTime - $endTime"; // eg: Saturday 8:30am-5pm
+    $msg="Open from $startTime - $endTime"; // eg: Saturday 8:30am-5pm
   }
   
   return $msg;
