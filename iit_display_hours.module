@@ -46,7 +46,10 @@ function get_googleAPI_key(){
 
 //retrieve JSON data from a Google Calendar (public)
 function iit_display_hours_get_calendar_data($calendar, $dateToGet=0){
-  $key = get_googleAPI_key();
+  $key = getenv('GOOGLE_API');
+  if (!$key){
+    $key = get_googleAPI_key();
+  }
   $APIformat="Y-m-d";
   $timeMin = date($APIformat,time()+$dateToGet) . 'T00:00:00.000Z';
   $timeMax = date($APIformat,time()+$dateToGet) . 'T23:59:00.000Z';
