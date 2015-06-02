@@ -2,6 +2,7 @@
 /**
  * Implements hook_block_info.
  */
+
 function iit_display_hours_block_info() {
   $blocks['hours'] = array(
     'info' => t('IIT Display Library Hours'),
@@ -29,6 +30,7 @@ function iit_display_hours_get_and_format_todays_date(){
 
 //retrieve JSON data from a Google Calendar (public)
 function iit_display_hours_get_calendar_data($calendar, $dateToGet=0){
+  $debug=true;
   $key = getenv('GOOGLE_API'); // duritalservices@iit.edu Google API key
   if(($key==NULL)||($key=="")){
     trigger_error('Google API key not found', E_USER_NOTICE);
@@ -39,7 +41,9 @@ function iit_display_hours_get_calendar_data($calendar, $dateToGet=0){
   $url='https://www.googleapis.com/calendar/v3/calendars/' . $calendar . '/events?singleEvents=true&orderby=startTime&timeMin=' . 
       $timeMin . '&timeMax=' . $timeMax . '&maxResults=1&key=' . $key;
     //this works more reliably than only getting one event
-  
+  if ($debug){
+    print $url;
+  }
   $jsonFile = file_get_contents($url);
   if (!$jsonFile) {
       trigger_error('NO DATA returned from url.', E_USER_NOTICE);
@@ -53,7 +57,7 @@ function iit_display_hours_get_calendar_data($calendar, $dateToGet=0){
 }
 
 function iit_display_hours_check_if_open($item){   
-  
+  $debug=true;
   $now=time();
   
   if (isset($item->start->dateTime)){ // non 24-hour event
@@ -64,6 +68,10 @@ function iit_display_hours_check_if_open($item){
   else{ // all day event
     $unixStart=strtotime(substr($item->start->date, 0,16));
     $unixEnd=strtotime(substr($item->end->date, 0,16));
+  }
+  if ($debug){
+    print_r($item);
+    print "<br/>now=$now start=$unixStart end=$unixEnd";
   }
 
   if ( ($now < $unixStart) || ($now > $unixEnd) ){
@@ -147,11 +155,14 @@ function iit_display_hours_format_todays_hours($startTime,$endTime){
 }
 
 function iit_display_hours_format_message(){
+  $debug=false;
   $galvinCal="iit.edu_8l0d8qd4qtfn7skmgkiu55uv58%40group.calendar.google.com";
-
   $dataObj=iit_display_hours_get_calendar_data($galvinCal);
 
   if (count($dataObj)>0){
+    if ($debug){
+      print_r($dataObj[0]);
+    }
     $isOpen = iit_display_hours_check_if_open($dataObj[0]);
     $openMsg = iit_display_hours_format_open_msg($isOpen);
     $message .= "<p>Currently: $openMsg</p>";
