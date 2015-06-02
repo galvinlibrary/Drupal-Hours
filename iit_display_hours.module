@@ -1,8 +1,8 @@
 <?php
+  $GLOBALS['conf']['cache'] = FALSE;
 /**
  * Implements hook_block_info.
  */
-
 function iit_display_hours_block_info() {
   $blocks['hours'] = array(
     'info' => t('IIT Display Library Hours'),
@@ -178,7 +178,6 @@ function iit_display_hours_format_message(){
 
 
 function iit_display_hours_block_view($delta = '') {
-  cache_clear_all('iit_display_hours', 'cache', TRUE); 
   $msg = "<p>" . iit_display_hours_get_and_format_todays_date() . "</p>";
   $msg .= iit_display_hours_format_message();
   $block['subject'] = t("Today's Hours");
