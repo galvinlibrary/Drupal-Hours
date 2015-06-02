@@ -21,7 +21,7 @@ function iit_display_hours_format_time ($time){
 
 
 function iit_display_hours_get_and_format_todays_date(){
-  $dateFormat="l, F j, g:ia";
+  $dateFormat="l, F j";
   $today = date($dateFormat);
   return $today;
 }
