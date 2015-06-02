@@ -30,17 +30,18 @@ function iit_display_hours_get_and_format_todays_date(){
 
 //retrieve JSON data from a Google Calendar (public)
 function iit_display_hours_get_calendar_data($calendar, $dateToGet=0){
-  $debug=true;
+  $debug=false;
   $key = getenv('GOOGLE_API'); // duritalservices@iit.edu Google API key
   if(($key==NULL)||($key=="")){
     trigger_error('Google API key not found', E_USER_NOTICE);
   }  
   $APIformat="Y-m-d";
-  $timeMin = date($APIformat,time()+$dateToGet) . 'T00:00:00.000Z';
-  $timeMax = date($APIformat,time()+$dateToGet) . 'T23:59:00.000Z';
+  $timeMin = date($APIformat,time()+$dateToGet) . 'T12:00:00.000Z';
+  $timeMax = date($APIformat,time()+$dateToGet) . 'T13:00:00.000Z';
   $url='https://www.googleapis.com/calendar/v3/calendars/' . $calendar . '/events?singleEvents=true&orderby=startTime&timeMin=' . 
       $timeMin . '&timeMax=' . $timeMax . '&maxResults=1&key=' . $key;
     //this works more reliably than only getting one event
+    //google api pads date, was causing problems with returning yesterday's event. Instead of using midnight and 11:59 for range, use noon-1pm
   if ($debug){
     print $url;
   }
@@ -57,7 +58,7 @@ function iit_display_hours_get_calendar_data($calendar, $dateToGet=0){
 }
 
 function iit_display_hours_check_if_open($item){   
-  $debug=true;
+  $debug=false;
   $now=time();
   
   if (isset($item->start->dateTime)){ // non 24-hour event
