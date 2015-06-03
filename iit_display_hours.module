@@ -172,8 +172,8 @@ function iit_display_hours_format_message(){
   else{
     $message .= "<p>Library hours cannot be displayed at this time.</p>";
   }
-    $message .= "<p><a href=\"https://www.google.com/calendar/embed?mode=week&src=iit.edu_8l0d8qd4qtfn7skmgkiu55uv58%40group.calendar.google.com&ctz=America/Chicago
-\">View calendar</a></p>";
+    $message .= "<a href=\"https://www.google.com/calendar/embed?mode=week&src=iit.edu_8l0d8qd4qtfn7skmgkiu55uv58%40group.calendar.google.com&ctz=America/Chicago
+\"><img src=\"sites\all\modules\custom\iit_display_hours\images\google-calendar-icon-sm.png\"/></a>";
   return $message;  
   
 }
