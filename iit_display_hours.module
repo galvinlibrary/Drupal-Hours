@@ -170,7 +170,7 @@ function iit_display_hours_format_message(){
 	$message .= "<p>Currently: $openMsg</p>";
   }
   else{
-    $message .= " Library hours cannot be displayed at this time.";
+    $message .= "<p>Library hours cannot be displayed at this time.</p>";
   }
   return $message;  
   
