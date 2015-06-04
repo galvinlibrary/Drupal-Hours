@@ -179,7 +179,7 @@ function iit_display_hours_format_message(){
 
 
 function iit_display_hours_block_view($delta = '') {
-  $msg = "<p>" . iit_display_hours_get_and_format_todays_date() . "<a href=\"https://www.google.com/calendar/embed?mode=week&src=iit.edu_8l0d8qd4qtfn7skmgkiu55uv58%40group.calendar.google.com&ctz=America/Chicago\"><img src=\"\\sites\all\modules\custom\iit_display_hours\images\google-calendar-icon-sm.png\"/></a></p>";
+  $msg = "<p>" . iit_display_hours_get_and_format_todays_date() . "</p>";
   $msg .= iit_display_hours_format_message();
   $block['subject'] = t("Today's Hours");
   $block['content'] = $msg;
