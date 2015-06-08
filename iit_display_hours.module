@@ -14,8 +14,8 @@ function iit_display_hours_block_info() {
 //Communications & Marketing format for times
 function iit_display_hours_format_time ($time){ 
 	$time = str_replace(':00','',$time);
-	$time = str_replace('am','a.m.',$time);
-	$time = str_replace('pm','p.m.',$time);
+	$time = str_replace('am',' a.m.',$time);
+	$time = str_replace('pm',' p.m.',$time);
 	return $time;
 }
 
