@@ -36,8 +36,8 @@ function iit_display_hours_get_calendar_data($calendar, $dateToGet=0){
     trigger_error('Google API key not found', E_USER_NOTICE);
   }  
   $APIformat="Y-m-d";
-  $timeMin = date($APIformat,time()+$dateToGet) . 'T12:00:00.000Z';
-  $timeMax = date($APIformat,time()+$dateToGet) . 'T13:00:00.000Z';
+  $timeMin = date($APIformat,time()+$dateToGet) . 'T03:00:00.000Z';
+  $timeMax = date($APIformat,time()+$dateToGet) . 'T21:00:00.000Z';
   $url='https://www.googleapis.com/calendar/v3/calendars/' . $calendar . '/events?singleEvents=true&orderby=startTime&timeMin=' . 
       $timeMin . '&timeMax=' . $timeMax . '&maxResults=1&key=' . $key;
     //this works more reliably than only getting one event
