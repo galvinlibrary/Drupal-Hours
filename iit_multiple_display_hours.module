@@ -1,11 +1,12 @@
 <?php
+
   $GLOBALS['conf']['cache'] = FALSE;
 /**
  * Implements hook_block_info.
  */
 function iit_multiple_display_hours_block_info() {
   $blocks['hours'] = array(
-    'info' => t('IIT Display Library Hours'),
+    'info' => t('IIT Multiple Display Library Hours'),
     'cache' => DRUPAL_NO_CACHE
   );
   return $blocks;
@@ -164,7 +165,7 @@ function iit_multiple_display_hours_format_message($incluldeOpenMsg){
     if ($debug){
       print_r($dataObj[0]);
     }
-    $message = "<p>" . iit_multiple_display_hours_format_hours_data($dataObj) . "</p>";
+    $message = iit_multiple_display_hours_format_hours_data($dataObj);
     if ($incluldeOpenMsg>0){// won't use this flag for hours page
       $isOpen = iit_multiple_display_hours_check_if_open($dataObj[0]);
       $openMsg = iit_multiple_display_hours_format_open_msg($isOpen);
@@ -181,10 +182,11 @@ function iit_multiple_display_hours_format_message($incluldeOpenMsg){
 
 
 function iit_multiple_display_hours_block_view($delta = '') {
-  $incluldeOpenMsg=1;
-  $msg = "<p>" . iit_multiple_display_hours_get_and_format_todays_date() . "</p>";
-  $msg .= iit_multiple_display_hours_format_message($incluldeOpenMsg);
-  $block['subject'] = t("Today's Hours");
+  $incluldeOpenMsg=0;
+  $today = iit_multiple_display_hours_get_and_format_todays_date();
+  $hours = iit_multiple_display_hours_format_message($incluldeOpenMsg);
+  $msg="<p><strong>" . $today . ":</strong> " . $hours . "</p>";
+//  $block['subject'] = t("Today's Hours");
   $block['content'] = $msg;
   return $block;
 }
