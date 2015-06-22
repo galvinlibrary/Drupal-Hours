@@ -1,0 +1,7 @@
+name = Multiple Display Library Hours
+description = Fetch and display hours from a public Google calendar for n days
+package = Illinois Institute of Technology
+core = 7.x
+version = VERSION
+files[] = iit_multiple_display_hours.module
+

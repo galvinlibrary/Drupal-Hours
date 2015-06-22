@@ -3,7 +3,7 @@
 /**
  * Implements hook_block_info.
  */
-function iit_display_hours_block_info() {
+function iit_multiple_display_hours_block_info() {
   $blocks['hours'] = array(
     'info' => t('IIT Display Library Hours'),
     'cache' => DRUPAL_NO_CACHE
@@ -12,7 +12,7 @@ function iit_display_hours_block_info() {
 }
 
 //Communications & Marketing format for times
-function iit_display_hours_format_time ($time){ 
+function iit_multiple_display_hours_format_time ($time){ 
 	$time = str_replace(':00','',$time);
 	$time = str_replace('am',' a.m.',$time);
 	$time = str_replace('pm',' p.m.',$time);
@@ -20,7 +20,7 @@ function iit_display_hours_format_time ($time){
 }
 
 
-function iit_display_hours_get_and_format_todays_date(){
+function iit_multiple_display_hours_get_and_format_todays_date(){
   $dateFormat="l, F j";
   $today = date($dateFormat);
   return $today;
@@ -29,7 +29,7 @@ function iit_display_hours_get_and_format_todays_date(){
 
 
 //retrieve JSON data from a Google Calendar (public)
-function iit_display_hours_get_calendar_data($calendar, $dateToGet=0){
+function iit_multiple_display_hours_get_calendar_data($calendar, $dateToGet=0){
   $debug=false;
   $key = getenv('GOOGLE_API'); // duritalservices@iit.edu Google API key
   if(($key==NULL)||($key=="")){
@@ -57,7 +57,7 @@ function iit_display_hours_get_calendar_data($calendar, $dateToGet=0){
   }
 }
 
-function iit_display_hours_check_if_open($item){   
+function iit_multiple_display_hours_check_if_open($item){   
   $debug=false;
   $now=time();
   
@@ -85,7 +85,7 @@ function iit_display_hours_check_if_open($item){
   return $isOpen;
 }
 
-function iit_display_hours_format_open_msg($isOpen){
+function iit_multiple_display_hours_format_open_msg($isOpen){
   if ($isOpen<=0){
     $openMsg="<span class=\"closed\">CLOSED</span>";   
   }          
@@ -95,7 +95,7 @@ function iit_display_hours_format_open_msg($isOpen){
   return $openMsg;
 }
 
-function iit_display_hours_format_hours_data($dateData){// default is to use Galvin and today's Unix date
+function iit_multiple_display_hours_format_hours_data($dateData){// default is to use Galvin and today's Unix date
   $msg="no data available";
   $timeFormat="g:ia";
   
@@ -121,10 +121,10 @@ function iit_display_hours_format_hours_data($dateData){// default is to use Gal
         $tmpEnd=strtotime(substr($item->end->date, 0,16));
       }
       
-      $startTime = iit_display_hours_format_time(date($timeFormat,$tmpStart));
-      $endTime = iit_display_hours_format_time(date($timeFormat,$tmpEnd));
+      $startTime = iit_multiple_display_hours_format_time(date($timeFormat,$tmpStart));
+      $endTime = iit_multiple_display_hours_format_time(date($timeFormat,$tmpEnd));
       
-      $msg=iit_display_hours_format_todays_hours($startTime, $endTime);
+      $msg=iit_multiple_display_hours_format_todays_hours($startTime, $endTime);
 
       return $msg; // return hours info
     } // end library open
@@ -137,7 +137,7 @@ function iit_display_hours_format_hours_data($dateData){// default is to use Gal
 }// end function
 
 
-function iit_display_hours_format_todays_hours($startTime,$endTime){
+function iit_multiple_display_hours_format_todays_hours($startTime,$endTime){
   
   if ($endTime=="12a.m."){ // don't use 12am time to avoid confusion
     if ($startTime=="12a.m."){ // eg: Tuesday 12am-12am
@@ -155,35 +155,35 @@ function iit_display_hours_format_todays_hours($startTime,$endTime){
   
 }
 
-function iit_display_hours_format_message($incluldeOpenMsg){
+function iit_multiple_display_hours_format_message($incluldeOpenMsg){
   $debug=false;
   $galvinCal="iit.edu_8l0d8qd4qtfn7skmgkiu55uv58%40group.calendar.google.com";
-  $dataObj=iit_display_hours_get_calendar_data($galvinCal);
+  $dataObj=iit_multiple_display_hours_get_calendar_data($galvinCal);
 
   if (count($dataObj)>0){
     if ($debug){
       print_r($dataObj[0]);
     }
-    $message = "<p>" . iit_display_hours_format_hours_data($dataObj) . "</p>";
+    $message = "<p>" . iit_multiple_display_hours_format_hours_data($dataObj) . "</p>";
     if ($incluldeOpenMsg>0){// won't use this flag for hours page
-      $isOpen = iit_display_hours_check_if_open($dataObj[0]);
-      $openMsg = iit_display_hours_format_open_msg($isOpen);
+      $isOpen = iit_multiple_display_hours_check_if_open($dataObj[0]);
+      $openMsg = iit_multiple_display_hours_format_open_msg($isOpen);
       $message .= "<p>Currently: $openMsg</p>";
     }
   }
   else{
     $message .= "<p>Library hours cannot be displayed at this time.</p>";
   }
-//    $message .= "<a href=\"https://www.google.com/calendar/embed?mode=week&src=iit.edu_8l0d8qd4qtfn7skmgkiu55uv58%40group.calendar.google.com&ctz=America/Chicago\"><img src=\"sites\all\modules\custom\iit_display_hours\images\google-calendar-icon-sm.png\"/></a>";
+//    $message .= "<a href=\"https://www.google.com/calendar/embed?mode=week&src=iit.edu_8l0d8qd4qtfn7skmgkiu55uv58%40group.calendar.google.com&ctz=America/Chicago\"><img src=\"sites\all\modules\custom\iit_multiple_display_hours\images\google-calendar-icon-sm.png\"/></a>";
   return $message;  
   
 }
 
 
-function iit_display_hours_block_view($delta = '') {
+function iit_multiple_display_hours_block_view($delta = '') {
   $incluldeOpenMsg=1;
-  $msg = "<p>" . iit_display_hours_get_and_format_todays_date() . "</p>";
-  $msg .= iit_display_hours_format_message($incluldeOpenMsg);
+  $msg = "<p>" . iit_multiple_display_hours_get_and_format_todays_date() . "</p>";
+  $msg .= iit_multiple_display_hours_format_message($incluldeOpenMsg);
   $block['subject'] = t("Today's Hours");
   $block['content'] = $msg;
   return $block;
