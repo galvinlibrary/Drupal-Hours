@@ -186,9 +186,11 @@ function iit_multiple_display_hours_format_message($incluldeOpenMsg, $daysAhead)
 
 function iit_multiple_display_hours_block_view($delta = '') {
   $incluldeOpenMsg=0;
-  $today = iit_multiple_display_hours_get_and_format_date(0);
-  $hours = iit_multiple_display_hours_format_message($incluldeOpenMsg, 7);
-  $msg="<p><strong>" . $today . ":</strong> " . $hours . "</p>";
+  for ($i=0; $i<7; $i++){
+    $day = iit_multiple_display_hours_get_and_format_date($i);
+    $hours = iit_multiple_display_hours_format_message($incluldeOpenMsg, $i);
+    $msg .= $day . ": " . $hours . "<br/>";
+  }
 //  $block['subject'] = t("Today's Hours");
   $block['content'] = $msg;
   return $block;
