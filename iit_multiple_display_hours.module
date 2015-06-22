@@ -156,26 +156,29 @@ function iit_multiple_display_hours_format_todays_hours($startTime,$endTime){
   
 }
 
-function iit_multiple_display_hours_format_message($incluldeOpenMsg){
+function iit_multiple_display_hours_format_message($incluldeOpenMsg, $loop){
   $debug=false;
   $galvinCal="iit.edu_8l0d8qd4qtfn7skmgkiu55uv58%40group.calendar.google.com";
-  $dataObj=iit_multiple_display_hours_get_calendar_data($galvinCal, 6);
+  $message="";
+  for ($i=0; $i<$loop; $i++){
+    $dataObj=iit_multiple_display_hours_get_calendar_data($galvinCal, $i);
 
-  if (count($dataObj)>0){
-    if ($debug){
-      print_r($dataObj[0]);
+    if (count($dataObj)>0){
+      if ($debug){
+        print_r($dataObj[0]);
+      }
+      $message .= iit_multiple_display_hours_format_hours_data($dataObj);
+      if ($incluldeOpenMsg>0){// won't use this flag for hours page
+        $isOpen = iit_multiple_display_hours_check_if_open($dataObj[0]);
+        $openMsg = iit_multiple_display_hours_format_open_msg($isOpen);
+        $message .= "<p>Currently: $openMsg</p>";
+      }
     }
-    $message = iit_multiple_display_hours_format_hours_data($dataObj);
-    if ($incluldeOpenMsg>0){// won't use this flag for hours page
-      $isOpen = iit_multiple_display_hours_check_if_open($dataObj[0]);
-      $openMsg = iit_multiple_display_hours_format_open_msg($isOpen);
-      $message .= "<p>Currently: $openMsg</p>";
+    else{
+      $message .= "<p>Library hours cannot be displayed at this time.</p>";
     }
+  //    $message .= "<a href=\"https://www.google.com/calendar/embed?mode=week&src=iit.edu_8l0d8qd4qtfn7skmgkiu55uv58%40group.calendar.google.com&ctz=America/Chicago\"><img src=\"sites\all\modules\custom\iit_multiple_display_hours\images\google-calendar-icon-sm.png\"/></a>";
   }
-  else{
-    $message .= "<p>Library hours cannot be displayed at this time.</p>";
-  }
-//    $message .= "<a href=\"https://www.google.com/calendar/embed?mode=week&src=iit.edu_8l0d8qd4qtfn7skmgkiu55uv58%40group.calendar.google.com&ctz=America/Chicago\"><img src=\"sites\all\modules\custom\iit_multiple_display_hours\images\google-calendar-icon-sm.png\"/></a>";
   return $message;  
   
 }
@@ -184,7 +187,7 @@ function iit_multiple_display_hours_format_message($incluldeOpenMsg){
 function iit_multiple_display_hours_block_view($delta = '') {
   $incluldeOpenMsg=0;
   $today = iit_multiple_display_hours_get_and_format_todays_date();
-  $hours = iit_multiple_display_hours_format_message($incluldeOpenMsg);
+  $hours = iit_multiple_display_hours_format_message($incluldeOpenMsg, 7);
   $msg="<p><strong>" . $today . ":</strong> " . $hours . "</p>";
 //  $block['subject'] = t("Today's Hours");
   $block['content'] = $msg;
