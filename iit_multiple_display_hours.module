@@ -21,9 +21,9 @@ function iit_multiple_display_hours_format_time ($time){
 }
 
 
-function iit_multiple_display_hours_get_and_format_todays_date(){
+function iit_multiple_display_hours_get_and_format_date($daysAhead){
   $dateFormat="l, F j";
-  $today = date($dateFormat);
+  $today = date($dateFormat,time()+($daysAhead*86400));
   return $today;
 }
 
@@ -156,12 +156,12 @@ function iit_multiple_display_hours_format_todays_hours($startTime,$endTime){
   
 }
 
-function iit_multiple_display_hours_format_message($incluldeOpenMsg, $loop){
+function iit_multiple_display_hours_format_message($incluldeOpenMsg, $daysAhead){
   $debug=false;
   $galvinCal="iit.edu_8l0d8qd4qtfn7skmgkiu55uv58%40group.calendar.google.com";
   $message="";
-  for ($i=0; $i<$loop; $i++){
-    $dataObj=iit_multiple_display_hours_get_calendar_data($galvinCal, $i);
+
+    $dataObj=iit_multiple_display_hours_get_calendar_data($galvinCal, $daysAhead);
 
     if (count($dataObj)>0){
       if ($debug){
@@ -178,7 +178,7 @@ function iit_multiple_display_hours_format_message($incluldeOpenMsg, $loop){
       $message .= "<p>Library hours cannot be displayed at this time.</p>";
     }
   //    $message .= "<a href=\"https://www.google.com/calendar/embed?mode=week&src=iit.edu_8l0d8qd4qtfn7skmgkiu55uv58%40group.calendar.google.com&ctz=America/Chicago\"><img src=\"sites\all\modules\custom\iit_multiple_display_hours\images\google-calendar-icon-sm.png\"/></a>";
-  }
+
   return $message;  
   
 }
@@ -186,7 +186,7 @@ function iit_multiple_display_hours_format_message($incluldeOpenMsg, $loop){
 
 function iit_multiple_display_hours_block_view($delta = '') {
   $incluldeOpenMsg=0;
-  $today = iit_multiple_display_hours_get_and_format_todays_date();
+  $today = iit_multiple_display_hours_get_and_format_date(0);
   $hours = iit_multiple_display_hours_format_message($incluldeOpenMsg, 7);
   $msg="<p><strong>" . $today . ":</strong> " . $hours . "</p>";
 //  $block['subject'] = t("Today's Hours");
