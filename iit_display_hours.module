@@ -164,11 +164,11 @@ function iit_display_hours_format_message($incluldeOpenMsg){
     if ($debug){
       print_r($dataObj[0]);
     }
-    $message = "<p>" . iit_display_hours_format_hours_data($dataObj) . "</p>";
+    $message = "<p>" . iit_display_hours_format_hours_data($dataObj) . "<a class=\"local-hide bump-right\" href=\"/students/use-the-library/hours\">more</a></p>";
     if ($incluldeOpenMsg>0){// won't use this flag for hours page
       $isOpen = iit_display_hours_check_if_open($dataObj[0]);
       $openMsg = iit_display_hours_format_open_msg($isOpen);
-      $message .= "<p>Currently: $openMsg</p>";
+      $message .= "<p class=\"clear\">Currently: $openMsg</p>";
     }
   }
   else{
