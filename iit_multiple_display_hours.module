@@ -186,7 +186,7 @@ function iit_multiple_display_hours_format_message($incluldeOpenMsg, $daysAhead)
 
 function iit_multiple_display_hours_block_view($delta = '') {
   $incluldeOpenMsg=0;
-  for ($i=0; $i<7; $i++){
+  for ($i=1; $i<8; $i++){
     $day = "<div class=\"col1\">" . iit_multiple_display_hours_get_and_format_date($i) . "</div>";
     $hours = "<div class=\"col2\">" . iit_multiple_display_hours_format_message($incluldeOpenMsg, $i) . "</div>";
     $msg .= $day . $hours;
