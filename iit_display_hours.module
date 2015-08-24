@@ -169,7 +169,7 @@ function iit_display_hours_format_message($incluldeOpenMsg){
     if ($debug){
       print_r($dataObj[0]);
     }
-    $message = "<p>" . iit_display_hours_format_hours_data($dataObj) .  l(t('more...'), '/hours',array('attributes'=>array('class'=>'page-hide bump-right'))) . "</p>";
+    $message = "<p>" . iit_display_hours_format_hours_data($dataObj) . " " . l(t('more...'), '/hours',array('attributes'=>array('class'=>'page-hide bump-right'))) . "</p>";
     
     if ($incluldeOpenMsg>0) {// won't use this flag for hours page
       $isOpen = iit_display_hours_check_if_open($dataObj[0]);
