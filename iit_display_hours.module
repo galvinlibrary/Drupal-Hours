@@ -145,21 +145,18 @@ function iit_display_hours_format_hours_data($dateData){// default is to use Gal
 
 
 function iit_display_hours_format_todays_hours($startTime,$endTime){
-  
-  if ($endTime=="12 a.m."){ // don't use 12am time to avoid confusion
-    if ($startTime=="12 a.m."){ // eg: Tuesday 12am-12am
-      $msg="Open 24 hours";
-    }
-    else{
-      $msg="$startTime - overnight"; // eg: Sunday 12pm-12am
-    }
+  if ( ($endTime=="12 a.m.") && ($startTime=="12 a.m.") ){ // don't use 12am time to avoid confusion
+    return "Open 24 hours";
   }
+  else if  ( ($endTime=="12 a.m.") && ($startTime!="12 a.m.") ){
+    return "Open $startTime - overnight";
+  }
+  else if  (($endTime!="12 a.m.") && ($startTime=="12 a.m.")){
+    return "Open overnight until $endTime";
+  }  
   else { // normal 
-    $msg="$startTime - $endTime"; // eg: Saturday 8:30am-5pm
-  }
-  
-  return $msg;
-  
+    return "$startTime - $endTime"; // eg: Saturday 8:30am-5pm
+  }  
 }
 
 function iit_display_hours_format_message($incluldeOpenMsg){
