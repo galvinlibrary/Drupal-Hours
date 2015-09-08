@@ -44,7 +44,7 @@ function iit_multiple_display_hours_get_calendar_data($calendar, $dayToGet=0){
     //this works more reliably than only getting one event
     //google api pads date, was causing problems with returning yesterday's event. Instead of using midnight and 11:59 for range, use noon-1pm
   if ($debug){
-    print $url;
+    print $url . "<br/>";
   }
   $jsonFile = file_get_contents($url);
   if (!$jsonFile) {
@@ -73,7 +73,7 @@ function iit_multiple_display_hours_check_if_open($item){
   }
   if ($debug){
     print_r($item);
-    print "<br/>now=$now start=$unixStart end=$unixEnd";
+    print "now=$now start=$unixStart end=$unixEnd". "<br/>";
   }
 
   if ( ($now < $unixStart) || ($now > $unixEnd) ){
