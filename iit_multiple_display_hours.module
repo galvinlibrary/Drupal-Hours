@@ -38,7 +38,7 @@ function iit_multiple_display_hours_get_calendar_data($calendar, $dayToGet=0){
   }  
   $APIformat="Y-m-d";
   $timeMin = date($APIformat,time()+($dayToGet*86400)) . 'T06:00:00.000Z';
-  $timeMax = date($APIformat,time()+($dayToGet*86400)) . 'T18:00:00.000Z';
+  $timeMax = date($APIformat,time()+($dayToGet*86400)) . 'T22:00:00.000Z'; //more Google cal weirdness. Sunday says weren't showing up until max time set to 10pm
   $url='https://www.googleapis.com/calendar/v3/calendars/' . $calendar . '/events?singleEvents=true&orderby=startTime&timeMin=' . 
       $timeMin . '&timeMax=' . $timeMax . '&maxResults=1&key=' . $key;
     //this works more reliably than only getting one event
