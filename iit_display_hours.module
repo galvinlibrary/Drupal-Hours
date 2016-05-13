@@ -4,7 +4,9 @@
 /**
  * Implements hook_block_info.
  */
-
+include_once './includes/bootstrap.inc';
+drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+ 
 function iit_display_hours_block_info() {
   $blocks['hours'] = array(
     'info' => t('IIT Display Library Hours'),
