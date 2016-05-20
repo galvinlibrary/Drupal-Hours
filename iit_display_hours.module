@@ -4,7 +4,7 @@
 /**
  * Implements hook_block_info.
  */
-include_once './includes/bootstrap.inc';
+include_once '../../../../../includes/bootstrap.inc';
 drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
  
 function iit_display_hours_block_info() {
@@ -15,7 +15,7 @@ function iit_display_hours_block_info() {
   return $blocks;
 }
 function iit_display_hours_block_view($delta = '') {
-  $incluldeOpenMsg=0;
+  $incluldeOpenMsg=1;
   $msg = "<p>" . iit_display_hours_get_and_format_todays_date() . "</p>";
   $msg .= iit_display_hours_format_message($incluldeOpenMsg);
   $block['subject'] = t("Today's Hours");
